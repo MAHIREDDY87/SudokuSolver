@@ -1,12 +1,17 @@
 #include <iostream>
 #include <vector>
-
 using namespace std;
 
-// Function to print the Sudoku board
+// Function to print the Sudoku board with lines
 void printBoard(const vector<vector<int>>& board) {
     for (int i = 0; i < 9; i++) {
+        if (i % 3 == 0 && i != 0) {
+            cout << "---------------------" << endl;
+        }
         for (int j = 0; j < 9; j++) {
+            if (j % 3 == 0 && j != 0) {
+                cout << "| ";
+            }
             cout << board[i][j] << " ";
         }
         cout << endl;
@@ -57,28 +62,34 @@ bool solveSudoku(vector<vector<int>>& board) {
                         board[row][col] = 0;
                     }
                 }
-                return false; // If no valid number can be placed
+                return false; // No valid number can be placed
             }
         }
     }
-    return true; // If the board is complete, the puzzle is solved
+    return true; // Board is complete
 }
 
-// Function to input the Sudoku puzzle from the user
+// Function to input the Sudoku puzzle
 void inputSudoku(vector<vector<int>>& board) {
-    cout << "Enter the Sudoku puzzle as 9 rows (9 digits per row, 0 for empty cells):" << endl;
+    cout << "Enter the Sudoku puzzle as 9 rows (9 digits per row, use 0 for empty cells):" << endl;
     for (int i = 0; i < 9; i++) {
         string rowInput;
         cin >> rowInput;
 
         if (rowInput.length() != 9) {
-            cout << "Invalid row input! Please enter exactly 9 digits for each row." << endl;
-            return;
+            cout << "Invalid row input! Please enter exactly 9 digits." << endl;
+            i--; // Ask for the same row again
+            continue;
         }
 
-        // Convert the string to integers and store in the board
         for (int j = 0; j < 9; j++) {
-            board[i][j] = rowInput[j] - '0';  // Convert char to integer
+            if (isdigit(rowInput[j])) {
+                board[i][j] = rowInput[j] - '0';
+            } else {
+                cout << "Invalid character! Only digits 0-9 allowed." << endl;
+                i--; // Repeat row input
+                break;
+            }
         }
     }
 }
@@ -86,19 +97,18 @@ void inputSudoku(vector<vector<int>>& board) {
 int main() {
     vector<vector<int>> board(9, vector<int>(9, 0));
 
-    // Get the input Sudoku puzzle
     inputSudoku(board);
 
-    cout << "Initial Sudoku Puzzle:" << endl;
+    cout << "\nInitial Sudoku Puzzle:\n" << endl;
     printBoard(board);
 
-    // Solve the Sudoku puzzle
     if (solveSudoku(board)) {
-        cout << "\nSolved Sudoku Puzzle:" << endl;
+        cout << "\nSolved Sudoku Puzzle:\n" << endl;
         printBoard(board);
     } else {
-        cout << "No solution exists!" << endl;
+        cout << "\nNo solution exists!" << endl;
     }
 
+    system("pause"); // Keeps console open (only on Windows)
     return 0;
 }
